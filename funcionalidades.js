@@ -1,20 +1,34 @@
 let estados_descripcion = [];
 
+const listaEventos = [];
+
 let estado_panel_descripcion = false; //13:41 Acá desplegamos el panel
 
-let index = 0;
+let index = 0; //NO BORRAR
 
 
 document.getElementById("crear_evento").addEventListener("click", ()=>{
 let evento = document.createElement("li");
+evento.id = "evento-"+index;
 evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
 <svg class="h-8 w-8 text-black-400 mt-2"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
   </svg>
-<input placeholder="Ingrese nombre del evento" style="width: 300px;" class="ml-2 p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none">
+<input placeholder="Ingrese nombre del evento" style="width: 300px;" class="ml-2 p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" disabled id="nombre-evento-titulo-${index}">
 <div class="ml-auto flex py-2">
+
+<!--CHECK SWITCH-->
+<div class="toggle mr-4">
+  <input type="checkbox" id="btn">
+  <label for="btn">
+    <span class="on">Público</span>
+    <span class="off">Privado</span>
+    <div class="slider"></div> <!-- El círculo que se desliza -->
+  </label>
+</div>
+
     <!--DANGER-->
-    <div class="relative tooltip-container">
+    <div class="relative tooltip-container" style="display:none">
         <svg class="h-8 w-8 text-yellow-400 mr-2" id="tooltip" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  
             <path stroke="none" d="M0 0h24v24H0z"/>
             <path d="M12 9v2m0 4v.01" />
@@ -24,17 +38,17 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
     </div>
     <!---->
     <!--ID-->
-    <div class="mt-1 flex mr-4"><p class="font-bold mr-1">ID</p><p>10051</p></div>
+    <div class="mt-1 flex mr-4"><p class="font-bold mr-1">ID</p><p>1005${index}</p></div>
     <!---->
     <!--MODIFICAR-->
-    <p onclick="visiblePanelModificar(${index})" class="bg-green-200 px-2 py-1 ml-2 mr-2 hover:bg-green-300 hover:cursor-pointer rounded disabled:pointer-events-none transition-all" id="collapse-${index}">Modificar</p>
+    <p onclick="visiblePanelModificar(${index})" class="bg-green-200 px-2 py-1 ml-2 mr-2 hover:bg-green-300 hover:cursor-pointer rounded-lg hover:rounded-lg disabled:pointer-events-none transition-all" id="collapse-${index}">Modificar</p>
     <!---->
     <!--ESTADISTICAS-->
-    <p class="bg-blue-200 px-2 py-1 hover:bg-blue-300 hover:cursor-pointer">Estadísticas</p>
+    <p class="bg-blue-200 px-2 py-1 hover:bg-blue-300 hover:cursor-pointer rounded-lg hover:rounded-lg">Estadísticas</p>
     <!---->
     <!--ELIMINAR-->
-    <div class="bg-red-100 mr-2 ml-2">
-        <svg class="h-8 w-8 text-red-900 hover:bg-red-300 hover:cursor-pointer"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  
+    <div class="bg-red-100 mr-2 ml-2 rounded-lg" onclick="eliminarEvento(${index})">
+        <svg class="h-8 w-8 text-red-900 hover:bg-red-300 hover:rounded-lg hover:cursor-pointer"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  
             <path stroke="none" d="M0 0h24v24H0z"/>  
             <line x1="4" y1="7" x2="20" y2="7" />  
             <line x1="10" y1="11" x2="10" y2="17" />  
@@ -48,46 +62,88 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
 </div>
 
 <!--Panel de descripción-->
-<div id="collapse-panel-${index}" style="display:none">
+<form><div id="collapse-panel-${index}" style="display:none">
   <div class="bg-green-200 p-1"></div>
 <div class="bg-slate-200 p-5 grid grid-cols-3">
   <div>
     <div class="ml-2">
-      <input placeholder="Nombre del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none">
+      <input id="input-evento-nombre-${index}" placeholder="Nombre del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none " required >
       <p class="text-xs ml-1">Nombre del evento*</p>
     </div>
 
     <div class="ml-2 my-1">
-      <input type="date" placeholder="Fecha del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none">
+      <input id="input-evento-fecha-${index}" type="date" placeholder="Fecha del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
       <p class="text-xs ml-1">Fecha del evento*</p>
     </div>
 
     <div class="ml-2">
-      <input onclick="visibleModalCategoriaEntradas(${index})" id="input_categoria" placeholder="Categorías de entrada" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none">
+      <input id="input-evento-categoriaE-${index}" onclick="visibleModalCategoriaEntradas(${index})" id="input_categoria" placeholder="Categorías de entrada" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" >
       <p class="text-xs ml-1">Categorías de entrada*</p>
     </div>
+
+    <div class="ml-2 my-1">
+      <input id="input-evento-ubicacion-${index}" placeholder="Ubiación del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
+      <p class="text-xs ml-1">Ubicación del evento*</p>
+    </div>
+
+    <div class="ml-2 my-1">
+      <div class="flex">
+      <input onclick="validarHora(${index})" type="time" id="input-evento-hora-inicio-${index}" placeholder="Hora del evento" style="width: 100px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
+      <input disabled type="time" id="input-evento-hora-fin-${index}" placeholder="Hora del evento" style="width: 100px;" class="ml-3 p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
+      
+      </div>
+      <p class="text-xs ml-1">Hora de inicio y fin del evento*</p>
+    </div>
+
+    <div class="ml-2 my-1">
+      <input type="number" id="input-evento-capacidad-${index}" placeholder="Capacidad del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
+      <p class="text-xs ml-1">Capacidad del evento*</p>
+    </div>
+
   </div>
 
   <div>
-    <textarea placeholder="Describe el evento..." class="w-full focus:outline-none p-2"></textarea>
+<div class="ml-2 my-1">
+      <input id="input-evento-organizador-${index}" placeholder="Organizador evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
+      <p class="text-xs ml-1">Organizador del evento*</p>
+    </div>
+
+    <div class="ml-2 my-1">
+      <input id="input-evento-contacto-organizador-${index}" placeholder="Contacto del organizador del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
+      <p class="text-xs ml-1">Contacto del organizador del evento*</p>
+    </div>
+
+ <div class="ml-2 my-1">
+      <input id="input-evento-redes-${index}" placeholder="Redes sociales del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
+      <p class="text-xs ml-1">Redes sociales del evento*</p>
+    </div>
+
+<div class="ml-2 my-1">
+      <input type="file" id="input-evento-cancelacion-${index}" required >
+      <p class="text-xs ml-1 text-red-900">Política de cancelación del evento*</p>
+    </div>
+
+    <div>
+    <textarea id="input-evento-descripcion-${index}" placeholder="Describe el evento..." class="w-full focus:outline-none p-2" required ></textarea>
     <p class="text-xs ml-1">Descripción del evento*</p>
+    </div>
   </div>
 
 
   <div>
     <div class="bg-white px-5 ml-5 mb-1 flex" style="width: 150px; height: 150px;">
-      <img src="images/imagen.png" class="my-auto mx-auto">
+      <img src="images/imagen.png" class="my-auto mx-auto" id="imagen_evento_${index}">
 
     </div>
     <p class="text-xs ml-5 my-1">Imagen del evento*</p>
-    <input type="file" class="ml-5">
+    <input id="input-evento-imagen-${index}" type="file" class="ml-5" onchange="subirImagen(this,'imagen_evento_${index}')" accept=".jpg, .jpeg, .png">
     <div class="flex">
-      <button class="p-2 bg-green-300 hover:bg-green-400 rounded mt-2 ml-auto">GUARDAR</button>
+      <button class="p-2 bg-green-300 hover:bg-green-400 rounded mt-2 ml-auto" type="button" onclick="guardarEvento(${index})">GUARDAR</button>
     </div>
   </div>
 
 </div>
-</div>
+</div></form>
 <!------------------------>
 `;
 //Cada vez que creamos un evento, vamos a usar el array de estados
@@ -98,6 +154,7 @@ let estado_panel_evento = {
 estados_descripcion.push(estado_panel_evento);
 index++;
 document.getElementById("eventos").appendChild(evento);
+//alert("El evento se creó exitosamente")
 })
 
 //Vamos a crear una función que identifique el evento donde lo aparezca y desaparezca a voluntad.
@@ -106,12 +163,14 @@ function visiblePanelModificar(e){
     estados_descripcion.forEach(elemento => {
     if(elemento.id == e){
         if(elemento.modificar == false){
-            document.getElementById("collapse-panel-"+e).style.display="block";
-            elemento.modificar = true;
+            document.getElementById("collapse-panel-"+e).style.display="block";  //Aki desplegamos
+            elemento.modificar = true; //<---Entramos al elemento y si está cerrado lo abrimos
+            
         }else{
-            document.getElementById("collapse-panel-"+e).style.display="none";
-            elemento.modificar = false;
+            document.getElementById("collapse-panel-"+e).style.display="none"; //Aki cerramos :v
+            elemento.modificar = false; //Entramos al elemento y si está abierto lo cerramos
         }
+
     }
 });    
 }
@@ -139,8 +198,74 @@ function verificarCheck(e){
   }else{
     document.getElementById(e+"-input").style.display="none";
   }
-  
 }
 
+//Eliminar componente
+function eliminarEvento(e){
+  document.getElementById("evento-"+e).remove();
+  alert("Se eliminó el evento de forma exitosa.")
+}
+
+function guardarEvento(e){
+let nombreE = document.getElementById("input-evento-nombre-"+e);
+let fechaE = document.getElementById("input-evento-fecha-"+e);
+let categoriaE = document.getElementById("input-evento-categoriaE-"+e);
+let descripcionE = document.getElementById("input-evento-descripcion-"+e);
+    let datosEvento = {
+      "id":e,
+      "nombre": nombreE.value,
+      "fecha":fechaE.value,
+      "categoria":categoriaE.value,
+      "descripcion":descripcionE.value,
+    }
+listaEventos.push(datosEvento);  //Acá ya guardamos el json en el array
+document.getElementById("nombre-evento-titulo-"+e).value = nombreE.value;
+alert("Evento guardado con éxito")
+}
+
+//SCRIPTS DE VERIFICACIÓN DE LA HORA
 
 
+function validarHora(e){
+  let horaInicioInput = document.getElementById('input-evento-hora-inicio-'+e);
+  let horaFinInput = document.getElementById('input-evento-hora-fin-'+e);
+  // Deshabilitar el input de hora de fin hasta que se ingrese una hora en el de inicio
+  horaInicioInput.addEventListener('input', function() {
+    if (horaInicioInput.value) {
+      // Habilitar el input de hora de fin cuando se ingrese una hora de inicio
+      horaFinInput.disabled = false;
+      console.log("INPUT DE HORA FIN")
+    } else {
+      // Volver a deshabilitar el input si se borra la hora de inicio
+      horaFinInput.disabled = true;
+      horaFinInput.value = ''; // Limpiar el valor de la hora de fin
+    }
+  });
+
+  // Validar la hora de fin respecto a la hora de inicio
+  horaFinInput.addEventListener('input', function() {
+    const horaInicio = horaInicioInput.value;
+    const horaFin = horaFinInput.value;
+
+    if (horaInicio && horaFin && horaFin <= horaInicio) {
+      console.log('La hora de fin debe ser posterior a la hora de inicio.');
+      alert('La hora de fin debe ser posterior a la hora de inicio.');
+    }
+  });
+}
+
+function subirImagen(input, imgId) {
+  const file = input.files[0]; // Obtener el archivo seleccionado
+  const imgElement = document.getElementById(imgId); // Obtener el elemento img dinámicamente
+  console.log(imgElement);
+  console.log("LLEGAMOS A IMAGEN")
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imgElement.src = e.target.result; // Establecer la imagen en el src
+    };
+    reader.readAsDataURL(file); // Leer el archivo como URL
+  }
+}
+
+    
