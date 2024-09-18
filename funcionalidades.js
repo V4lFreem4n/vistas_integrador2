@@ -8,10 +8,11 @@ let estado_panel_descripcion = false; //13:41 Acá desplegamos el panel
 
 let index = 0; //NO BORRAR
 
+let idAdvertenciaEventoNoRellenado = 0;
 
-document.getElementById("crear_evento").addEventListener("click", ()=>{
+function crearEvento(){
 
-restringirMultiplesEventes(); 
+
   
 let evento = document.createElement("li");
 evento.id = "evento-"+index;
@@ -33,7 +34,7 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
 </div>
 
     <!--DANGER-->
-    <div class="relative tooltip-container" style="display:none">
+    <div class="relative tooltip-container" style="display:none" id="dangerEventoDesplegado_${index}">
         <svg class="h-8 w-8 text-yellow-400 mr-2" id="tooltip" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  
             <path stroke="none" d="M0 0h24v24H0z"/>
             <path d="M12 9v2m0 4v.01" />
@@ -160,7 +161,7 @@ estados_descripcion.push(estado_panel_evento);
 index++;
 document.getElementById("eventos").appendChild(evento);
 //alert("El evento se creó exitosamente")
-})
+}
 
 //Vamos a crear una función que identifique el evento donde lo aparezca y desaparezca a voluntad.
 function visiblePanelModificar(e){
@@ -209,14 +210,12 @@ function verificarCheck(e){
 function eliminarEvento(e){
   document.getElementById("evento-"+e).remove();
   alert("Se eliminó el evento de forma exitosa.")
+  verificadorEventoDesplegado = false;
 }
 
 function guardarEvento(e) {
 
-  if(verificadorEventoDesplegado){
-    alert("Rellene los campos del evento que tiene pendiente.")
-    return;
-  }
+  
 
   let nombreE = document.getElementById("input-evento-nombre-" + e).value;
   let fechaE = document.getElementById("input-evento-fecha-" + e).value;
@@ -233,6 +232,7 @@ function guardarEvento(e) {
   let imagenE = document.getElementById("input-evento-imagen-" + e).files[0];  // Es un archivo
 
   // Valida si hay campos vacíos
+  
   if (!nombreE || !fechaE || !categoriaE || !ubicacionE || !horaInicioE || !horaFinE || !capacidadE || 
       !organizadorE || !contactoOrganizadorE || !redesE || !politicaCancelacionE || !descripcionE || !imagenE) {
     alert("Faltan datos");
@@ -263,10 +263,7 @@ function guardarEvento(e) {
 
   alert("Evento guardado con éxito");
 
-
-
-
-  verificadorEventoDesplegado = false;
+  verificadorEventoDesplegado = false; 
 }
 
 
@@ -317,5 +314,11 @@ function subirImagen(input, imgId) {
 
     
 function restringirMultiplesEventes(){
-  
+  if(verificadorEventoDesplegado==true){
+    alert("Tiene un evento pendiente por completar!!");
+    //document.getElementById
+  }else{ // Si se llega acá es que --> verificadorEventoDesplegado == false
+    verificadorEventoDesplegado = true;
+    crearEvento(); //El verificadorEventoDesplegado cambia de estado a false en "GUARDAR"
+  }
 }
