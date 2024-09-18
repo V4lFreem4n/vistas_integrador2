@@ -23,6 +23,17 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
 <input placeholder="Nombre del evento" style="width: 300px;" class="ml-2 p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" disabled id="nombre-evento-titulo-${index}">
 <div class="ml-auto flex py-2">
 
+<!--DANGER-->
+    <div class="relative tooltip-container" style="display:none" id="dangerEventoDesplegado_${index}">
+        <svg class="h-8 w-8 text-yellow-400 mr-2" id="tooltip" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  
+            <path stroke="none" d="M0 0h24v24H0z"/>
+            <path d="M12 9v2m0 4v.01" />
+            <path d="M5.07 19H19a2 2 0 0 0 1.75 -2.75L13.75 4a2 2 0 0 0 -3.5 0L3.25 16.25a2 2 0 0 0 1.75 2.75" />
+        </svg>
+        <div class="tooltip flex">¡Necesita <p class="font-bold mx-1">EDITAR</p> todos los datos para este evento!</div>
+    </div>
+    <!---->
+
 <!--CHECK SWITCH-->
 <div class="toggle mr-4">
   <input type="checkbox" id="btn${index}">
@@ -33,16 +44,6 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
   </label>
 </div>
 
-    <!--DANGER-->
-    <div class="relative tooltip-container" style="display:none" id="dangerEventoDesplegado_${index}">
-        <svg class="h-8 w-8 text-yellow-400 mr-2" id="tooltip" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  
-            <path stroke="none" d="M0 0h24v24H0z"/>
-            <path d="M12 9v2m0 4v.01" />
-            <path d="M5.07 19H19a2 2 0 0 0 1.75 -2.75L13.75 4a2 2 0 0 0 -3.5 0L3.25 16.25a2 2 0 0 0 1.75 2.75" />
-        </svg>
-        <div class="tooltip">¡Necesita ingresar todos los datos para este evento!</div>
-    </div>
-    <!---->
     <!--ID-->
     <div class="mt-1 flex mr-4"><p class="font-bold mr-1">ID</p><p>1005${index}</p></div>
     <!---->
@@ -211,6 +212,7 @@ function eliminarEvento(e){
   document.getElementById("evento-"+e).remove();
   alert("Se eliminó el evento de forma exitosa.")
   verificadorEventoDesplegado = false;
+  document.getElementById("dangerEventoDesplegado_"+(index-1)).style.display="none";
 }
 
 function guardarEvento(e) {
@@ -264,6 +266,7 @@ function guardarEvento(e) {
   alert("Evento guardado con éxito");
 
   verificadorEventoDesplegado = false; 
+  document.getElementById("dangerEventoDesplegado_"+(index-1)).style.display="none";
 }
 
 
@@ -316,7 +319,9 @@ function subirImagen(input, imgId) {
 function restringirMultiplesEventes(){
   if(verificadorEventoDesplegado==true){
     alert("Tiene un evento pendiente por completar!!");
-    //document.getElementById
+    
+    document.getElementById("dangerEventoDesplegado_"+(index-1)).style.display="flex"; //ESTO SE TIENE QUE BORRAR
+
   }else{ // Si se llega acá es que --> verificadorEventoDesplegado == false
     verificadorEventoDesplegado = true;
     crearEvento(); //El verificadorEventoDesplegado cambia de estado a false en "GUARDAR"
