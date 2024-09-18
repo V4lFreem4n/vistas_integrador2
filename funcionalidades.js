@@ -1,3 +1,5 @@
+let verificadorEventoDesplegado = false;
+
 let estados_descripcion = [];
 
 const listaEventos = [];
@@ -8,19 +10,22 @@ let index = 0; //NO BORRAR
 
 
 document.getElementById("crear_evento").addEventListener("click", ()=>{
+
+restringirMultiplesEventes(); 
+  
 let evento = document.createElement("li");
 evento.id = "evento-"+index;
 evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
 <svg class="h-8 w-8 text-black-400 mt-2"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
   </svg>
-<input placeholder="Ingrese nombre del evento" style="width: 300px;" class="ml-2 p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" disabled id="nombre-evento-titulo-${index}">
+<input placeholder="Nombre del evento" style="width: 300px;" class="ml-2 p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" disabled id="nombre-evento-titulo-${index}">
 <div class="ml-auto flex py-2">
 
 <!--CHECK SWITCH-->
 <div class="toggle mr-4">
-  <input type="checkbox" id="btn">
-  <label for="btn">
+  <input type="checkbox" id="btn${index}">
+  <label for="btn${index}">
     <span class="on">Público</span>
     <span class="off">Privado</span>
     <div class="slider"></div> <!-- El círculo que se desliza -->
@@ -41,7 +46,7 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
     <div class="mt-1 flex mr-4"><p class="font-bold mr-1">ID</p><p>1005${index}</p></div>
     <!---->
     <!--MODIFICAR-->
-    <p onclick="visiblePanelModificar(${index})" class="bg-green-200 px-2 py-1 ml-2 mr-2 hover:bg-green-300 hover:cursor-pointer rounded-lg hover:rounded-lg disabled:pointer-events-none transition-all" id="collapse-${index}">Modificar</p>
+    <p onclick="visiblePanelModificar(${index})" class="bg-green-200 px-2 py-1 ml-2 mr-2 hover:bg-green-300 hover:cursor-pointer rounded-lg hover:rounded-lg disabled:pointer-events-none transition-all" id="collapse-${index}">Editar</p>
     <!---->
     <!--ESTADISTICAS-->
     <p class="bg-blue-200 px-2 py-1 hover:bg-blue-300 hover:cursor-pointer rounded-lg hover:rounded-lg">Estadísticas</p>
@@ -206,22 +211,64 @@ function eliminarEvento(e){
   alert("Se eliminó el evento de forma exitosa.")
 }
 
-function guardarEvento(e){
-let nombreE = document.getElementById("input-evento-nombre-"+e);
-let fechaE = document.getElementById("input-evento-fecha-"+e);
-let categoriaE = document.getElementById("input-evento-categoriaE-"+e);
-let descripcionE = document.getElementById("input-evento-descripcion-"+e);
-    let datosEvento = {
-      "id":e,
-      "nombre": nombreE.value,
-      "fecha":fechaE.value,
-      "categoria":categoriaE.value,
-      "descripcion":descripcionE.value,
-    }
-listaEventos.push(datosEvento);  //Acá ya guardamos el json en el array
-document.getElementById("nombre-evento-titulo-"+e).value = nombreE.value;
-alert("Evento guardado con éxito")
+function guardarEvento(e) {
+
+  if(verificadorEventoDesplegado){
+    alert("Rellene los campos del evento que tiene pendiente.")
+    return;
+  }
+
+  let nombreE = document.getElementById("input-evento-nombre-" + e).value;
+  let fechaE = document.getElementById("input-evento-fecha-" + e).value;
+  let categoriaE = document.getElementById("input-evento-categoriaE-" + e).value;
+  let ubicacionE = document.getElementById("input-evento-ubicacion-" + e).value;
+  let horaInicioE = document.getElementById("input-evento-hora-inicio-" + e).value;
+  let horaFinE = document.getElementById("input-evento-hora-fin-" + e).value;
+  let capacidadE = document.getElementById("input-evento-capacidad-" + e).value;
+  let organizadorE = document.getElementById("input-evento-organizador-" + e).value;
+  let contactoOrganizadorE = document.getElementById("input-evento-contacto-organizador-" + e).value;
+  let redesE = document.getElementById("input-evento-redes-" + e).value;
+  let politicaCancelacionE = document.getElementById("input-evento-cancelacion-" + e).files[0];  // Es un archivo
+  let descripcionE = document.getElementById("input-evento-descripcion-" + e).value;
+  let imagenE = document.getElementById("input-evento-imagen-" + e).files[0];  // Es un archivo
+
+  // Valida si hay campos vacíos
+  if (!nombreE || !fechaE || !categoriaE || !ubicacionE || !horaInicioE || !horaFinE || !capacidadE || 
+      !organizadorE || !contactoOrganizadorE || !redesE || !politicaCancelacionE || !descripcionE || !imagenE) {
+    alert("Faltan datos");
+    return;
+  }
+
+  let datosEvento = {
+    id: e,
+    nombre: nombreE,
+    fecha: fechaE,
+    categoria: categoriaE,
+    ubicacion: ubicacionE,
+    horaInicio: horaInicioE,
+    horaFin: horaFinE,
+    capacidad: capacidadE,
+    organizador: organizadorE,
+    contactoOrganizador: contactoOrganizadorE,
+    redes: redesE,
+    politicaCancelacion: politicaCancelacionE.name, // Si deseas almacenar solo el nombre del archivo
+    descripcion: descripcionE,
+    imagen: imagenE.name // Solo guardamos el nombre del archivo
+  };
+
+  listaEventos.push(datosEvento);  // Guarda el evento en la lista
+
+  // Actualizar el título del evento si es necesario
+  document.getElementById("nombre-evento-titulo-" + e).value = nombreE;
+
+  alert("Evento guardado con éxito");
+
+
+
+
+  verificadorEventoDesplegado = false;
 }
+
 
 //SCRIPTS DE VERIFICACIÓN DE LA HORA
 
@@ -269,3 +316,6 @@ function subirImagen(input, imgId) {
 }
 
     
+function restringirMultiplesEventes(){
+  
+}
