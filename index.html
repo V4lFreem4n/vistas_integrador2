@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script async src="https://unpkg.com/@material-tailwind/html@latest/scripts/ripple.js"></script>
 </head>
 <body>
 <section class="bg-slate-300 w-screen h-screen px-0 py-10" id="allScreen">
@@ -27,7 +28,7 @@
 
 <!---MODAL--->
 <section id="categoria_entrada" class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-60 z-50 flex" style="display: none;">
-<section class="my-auto mx-auto bg-white p-5">
+<section class="rounded  my-auto mx-auto bg-white p-5">
   <div class="flex">
     <input type="checkbox" class="mr-2" id="cat1" onclick="verificarCheck('cat1')">
     <p class="mx-2" >SUPER VIP</p>
@@ -83,7 +84,7 @@
   </div>
 
   <div class="flex">
-<button class="p-2 bg-green-300 hover:bg-green-400 ml-auto mt-2" onclick="guardarEvento(event)"><p>GUARDAR</p></button>
+<button class="rounded  p-2 bg-green-300 hover:bg-green-400 ml-auto mt-2" onclick="guardarEventoCategoria(event)"><p>GUARDAR</p></button>
   </div>
 </section>
 
@@ -98,8 +99,17 @@
 </div>
 
 </section> 
+
+
+
+
+
 </body>
-<script async src="https://unpkg.com/@material-tailwind/html@latest/scripts/ripple.js"></script>
+
+  
+
+
+</script>
 <script src="./funcionalidades.js"></script>
 
 <!-- from node_modules -->
@@ -107,6 +117,30 @@
  
 <!-- from cdn -->
 <script src="https://unpkg.com/@material-tailwind/html@latest/scripts/collapse.js"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+
+<script>
+const labels = ['Enero', 'Febrero', 'Marzo', 'Abril']
+
+const graph = document.querySelector("#graph");
+
+const data = {
+    labels: labels,
+    datasets: [{
+        label:"Ejemplo 1",
+        data: [1, 2, 3, 4],
+        backgroundColor: 'rgba(9, 129, 176, 0.2)'
+    }]
+};
+
+const config = {
+    type: 'bar',
+    data: data,
+};
+
+new Chart(graph, config);
+</script>
 <style>
 
   #allScreen{

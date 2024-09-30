@@ -20,7 +20,7 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
 <svg class="h-8 w-8 text-black-400 mt-2"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
   </svg>
-<input placeholder="Nombre del evento" style="width: 300px;" class="ml-2 p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" disabled id="nombre-evento-titulo-${index}">
+<input placeholder="Complete los campos" style="width: 300px;" class="ml-2 p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" disabled id="nombre-evento-titulo-${index}">
 <div class="ml-auto flex py-2">
 
 <!--DANGER-->
@@ -51,7 +51,7 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
     <p onclick="visiblePanelModificar(${index})" class="bg-green-200 px-2 py-1 ml-2 mr-2 hover:bg-green-300 hover:cursor-pointer rounded-lg hover:rounded-lg disabled:pointer-events-none transition-all" id="collapse-${index}">Editar</p>
     <!---->
     <!--ESTADISTICAS-->
-    <p class="bg-blue-200 px-2 py-1 hover:bg-blue-300 hover:cursor-pointer rounded-lg hover:rounded-lg">Estadísticas</p>
+    <a class="bg-blue-200 px-2 py-1 hover:bg-blue-300 hover:cursor-pointer rounded-lg hover:rounded-lg" href="./graficos.html?id=${index}" target="_blank">Estadísticas</a>
     <!---->
     <!--ELIMINAR-->
     <div class="bg-red-100 mr-2 ml-2 rounded-lg" onclick="eliminarEvento(${index})">
@@ -69,7 +69,7 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
 </div>
 
 <!--Panel de descripción-->
-<form><div id="collapse-panel-${index}" style="display:none">
+<form><div id="collapse-panel-${index}" style="display:block">
   <div class="bg-green-200 p-1"></div>
 <div class="bg-slate-200 p-5 grid grid-cols-3">
   <div>
@@ -83,13 +83,13 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
       <p class="text-xs ml-1">Fecha del evento*</p>
     </div>
 
-    <div class="ml-2">
-      <input id="input-evento-categoriaE-${index}" onclick="visibleModalCategoriaEntradas(${index})" id="input_categoria" placeholder="Categorías de entrada" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" >
-      <p class="text-xs ml-1">Categorías de entrada*</p>
+    <div class="ml-2 my-1">
+      <input id="input-evento-ubicacion-${index}" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none " placeholder="Ubicación del evento">
+      <p class="text-xs ml-1">Ubicación del evento*</p>
     </div>
 
     <div class="ml-2 my-1">
-      <input id="input-evento-ubicacion-${index}" placeholder="Ubiación del evento" style="width: 300px;" class="p-2 text-gray-900 rounded-lg bg-gray-50 focus:outline-none" required >
+      <a id="input-evento-ubicacion-${index}" style="width: 300px;" class="hover:text-green-400" href="#" onclick="visibleModalCategoriaEntradas(${index})">Categorías de entrada</a>
       <p class="text-xs ml-1">Ubicación del evento*</p>
     </div>
 
@@ -140,23 +140,25 @@ evento.innerHTML = ` <div class="bg-white py-2 flex px-2 my-2">
   <div>
     <div class="bg-white px-5 ml-5 mb-1 flex" style="width: 150px; height: 150px;">
       <img src="images/imagen.png" class="my-auto mx-auto" id="imagen_evento_${index}">
-
+ 
     </div>
     <p class="text-xs ml-5 my-1">Imagen del evento*</p>
     <input id="input-evento-imagen-${index}" type="file" class="ml-5" onchange="subirImagen(this,'imagen_evento_${index}')" accept=".jpg, .jpeg, .png">
     <div class="flex">
-      <button class="p-2 bg-green-300 hover:bg-green-400 rounded mt-2 ml-auto" type="button" onclick="guardarEvento(${index})">GUARDAR</button>
+      <button class="p-2 bg-green-300 hover:bg-green-400 rounded mt-2 ml-auto rounded" type="button" onclick="guardarEvento(${index})">GUARDAR</button>
     </div>
   </div>
 
 </div>
 </div></form>
+
+
 <!------------------------>
 `;
 //Cada vez que creamos un evento, vamos a usar el array de estados
 let estado_panel_evento = {
     "id":index,
-    "modificar":false
+    "modificar":true
 }
 estados_descripcion.push(estado_panel_evento);
 index++;
@@ -166,21 +168,47 @@ document.getElementById("eventos").appendChild(evento);
 
 //Vamos a crear una función que identifique el evento donde lo aparezca y desaparezca a voluntad.
 function visiblePanelModificar(e){
-
+console.log("Se pulsó :", "panel visible")
     estados_descripcion.forEach(elemento => {
+
     if(elemento.id == e){
         if(elemento.modificar == false){
             document.getElementById("collapse-panel-"+e).style.display="block";  //Aki desplegamos
+            //document.getElementById("panel-stats-"+e).style.display="none";
             elemento.modificar = true; //<---Entramos al elemento y si está cerrado lo abrimos
-            
+            console.log("Se pulsó :", "panel visible - DESPLEGADO ", "elemento.modificar = true")
         }else{
             document.getElementById("collapse-panel-"+e).style.display="none"; //Aki cerramos :v
             elemento.modificar = false; //Entramos al elemento y si está abierto lo cerramos
+            console.log("Se pulsó :", "panel visible - OCULTO ", "elemento.modificar = false")
         }
 
     }
 });    
 }
+
+/*function visiblePanelEstadisticas(e){
+  console.log("Se pulsó :", "estadisticas visible")
+  estados_descripcion.forEach(elemento => {
+    if(elemento.id == e){
+        if(elemento.modificar == false){
+          document.getElementById("panel-stats-"+e).style.display="block";
+          document.getElementById("collapse-panel-"+e).style.display="none";
+              //Aki desplegamos
+            elemento.modificar = true; //<---Entramos al elemento y si está cerrado lo abrimos
+            console.log("Se pulsó :", "estadisticas visible - DESPLEGADO ","elemento.modificar = true;")
+        }else{
+            document.getElementById("panel-stats-"+e).style.display="none"; //Aki cerramos :v
+            elemento.modificar = false; //Entramos al elemento y si está abierto lo cerramos
+            console.log("Se pulsó :", "estadisticas visible - OCULTO ", "elemento.modificar = false;")
+        }
+
+    }
+});  
+
+
+  
+}*/
 
 function visibleModalCategoriaEntradas(e){
   document.getElementById("categoria_entrada").style.display="flex";
@@ -327,3 +355,9 @@ function restringirMultiplesEventes(){
     crearEvento(); //El verificadorEventoDesplegado cambia de estado a false en "GUARDAR"
   }
 }
+
+
+function guardarEventoCategoria(e){
+  alert("Las categorías del evento se guardaron con Éxito")
+}
+
