@@ -87,8 +87,35 @@
       </div>
     </div>
   </div>
-  
+  <button id="download-btn" class="bg-red-300 hover:bg-red-400 p-1 rounded mb-2 ml-2">Descargar como PDF</button>
 </body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+  document.getElementById("download-btn").addEventListener("click", function() {
+            // Seleccionar el contenido a capturar
+            const content = document.getElementById("panel-stats");
+
+            // Usar html2canvas para capturar la imagen
+            html2canvas(content).then(canvas => {
+                // Convertir el canvas a una imagen
+                const imgData = canvas.toDataURL('image/png');
+                
+                // Crear un documento PDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                
+                // Agregar la imagen al PDF
+                pdf.addImage(imgData, 'PNG', 10, 10, 190, 0); // 190 es el ancho ajustado del PDF A4
+
+                // Descargar el PDF
+                pdf.save("captura.pdf");
+            });
+        });
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const labels = ["General","VIP","SUPER VIP","NIÑOS VIP"];
